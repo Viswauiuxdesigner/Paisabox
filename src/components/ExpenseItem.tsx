@@ -97,8 +97,15 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onClick={() => {
+          if (offsetX < -10) {
+            setOffsetX(0);
+            return;
+          }
+          onEdit(expense);
+        }}
         style={{ transform: `translateX(${offsetX}px)` }}
-        className="relative flex items-center justify-between gap-3 p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl transition-transform duration-150 ease-out group"
+        className="relative flex items-center justify-between gap-3 p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-teal-500/40 rounded-2xl transition-all duration-150 ease-out group cursor-pointer"
       >
         <div className="flex items-center gap-3 min-w-0">
           <div
@@ -130,11 +137,14 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
             {formatCurrency(expense.amount, currency)}
           </span>
 
-          {/* Desktop action buttons */}
-          <div className="hidden md:flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+          {/* Visible Edit & Delete buttons (mobile + desktop) */}
+          <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
             <button
               type="button"
-              onClick={() => onEdit(expense)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(expense);
+              }}
               aria-label="Edit expense"
               className="p-1.5 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/50 transition-colors cursor-pointer"
             >
@@ -142,11 +152,12 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (expense.id !== undefined) onDelete(expense.id);
               }}
               aria-label="Delete expense"
-              className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
+              className="hidden md:inline-flex p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
             >
               <Trash2 size={15} />
             </button>
